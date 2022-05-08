@@ -1,4 +1,9 @@
+import 'dart:math';
+
+import 'package:estados/bloc/user/user_bloc.dart';
+import 'package:estados/models/user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class Pagina1Page extends StatelessWidget {
@@ -7,18 +12,45 @@ class Pagina1Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pagina1'),
+        title: Text('Pagina 1'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            onPressed: (){
+              BlocProvider.of<UserBloc>(context, listen: false)
+              .add(DeleteUser());
+            }, 
+            )
+        ],
       ),
-      body: InformacionUsuarios(),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.accessibility_new),
-          onPressed: () => Navigator.pushNamed(context, 'pagina2')
-          ),
-    );
+      body: BlocBuilder<UserBloc, UserState>(
+        builder: ( _ , state) {
+          return state.existUser
+          ? InformacionUsuario(user: state.user! )
+          : const Center(
+            child: Text('No hay usuario seleccionado'),
+            );
+        },
+        ),
+      
+      //InformacionUsuario(),
+
+    floatingActionButton: FloatingActionButton(
+      child: Icon( Icons.accessibility_new ),
+      onPressed: () => Navigator.pushNamed(context, 'pagina2')
+    ),
+  );
   }
 }
 
-class InformacionUsuarios extends StatelessWidget {
+class InformacionUsuario extends StatelessWidget {
+
+  final User user;
+
+  const InformacionUsuario({
+    Key? key, 
+    required this.user
+    }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,22 +62,21 @@ class InformacionUsuarios extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          Text('General', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-          Divider(),
-          ListTile(title: Text('Nombre: ')),
-          ListTile(title: Text('Edad: ')),
+          const Text('General', style: TextStyle( fontSize: 18, fontWeight: FontWeight.bold ) ),
+          const Divider(),
 
-          Text('General', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-          Divider(),
-          ListTile(title: Text('Profesion 1')),
-          ListTile(title: Text('Profesion 1')),
-          ListTile(title: Text('Profesion 1')),
+          ListTile( title: Text('Nombre: ${user.nombre}')),
+          ListTile( title: Text('Edad: ${user.edad}')),
 
+          const Text('Profesiones', style: TextStyle( fontSize: 18, fontWeight: FontWeight.bold ) ),
+          const Divider(),
 
-
-
+          ...user.profesiones.map(
+            (prof) => ListTile( title: Text(prof) )
+          ).toList()
         ],
       ),
     );
   }
+
 }
