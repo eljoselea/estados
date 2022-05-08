@@ -1,13 +1,19 @@
+import 'package:estados/bloc/user/user_bloc.dart';
+import 'package:estados/models/user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class Pagina2Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+  final userBloc = BlocProvider.of<UserBloc>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pagina2'),
+        title: Text('Pagina 2'),
       ),
       body: Center(
         child: Column(
@@ -15,26 +21,37 @@ class Pagina2Page extends StatelessWidget {
           children: [
 
             MaterialButton(
-              onPressed: (){},
-              child: Text('Establecer Usuario', style: TextStyle(color: Colors.white),),
+              child: Text('Establecer Usuario', style: TextStyle( color: Colors.white ) ),
               color: Colors.blue,
-              ),
+              onPressed: () {
+                final newUser = User(
+                  nombre: 'Jose',
+                  edad: 32,
+                  profesiones: ['FUllstack Developer']
+                );
+                userBloc.add(ActivateUser(newUser));
+              }
+            ),
 
-              MaterialButton(
-              onPressed: (){},
-              child: Text('Cambiar edad', style: TextStyle(color: Colors.white),),
+            MaterialButton(
+              child: Text('Cambiar Edad', style: TextStyle( color: Colors.white ) ),
               color: Colors.blue,
-              ),
+              onPressed: () {
+                userBloc.add(ChangeUserAge(9));
+              }
+            ),
 
-              MaterialButton(
-              onPressed: (){},
-              child: Text('Añadir profesión', style: TextStyle(color: Colors.white),),
+            MaterialButton(
+              child: Text('Añadir Profesion', style: TextStyle( color: Colors.white ) ),
               color: Colors.blue,
-              ),
+              onPressed: () {
+                userBloc.add(AddProfession('Profesion'));
+              }
+            ),
 
           ],
         )
-        ),
-    );
+    ),
+  );
   }
 }
